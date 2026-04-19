@@ -4,11 +4,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Avatar from '../Avatar'
 import MenuItem from './MenuItem'
 import { MenuIcon } from 'lucide-react'
+import useRegisterModal from '@/lib/useRegisterModal'
 
 
 const UserMenu = () => {
     const [isOpen, setIsOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement | null>(null)
+    const registerModal = useRegisterModal()
     
     // renvoie la valeur opposée de la valeur actuelle; dans ce cas true
     const toggleOpen = useCallback(() => {
@@ -57,7 +59,7 @@ const UserMenu = () => {
                             label= 'Se connecter'
                         />
                         <MenuItem 
-                            onClick={() => {}}
+                            onClick={registerModal.onOpen}
                             label= "S'inscrire"
                         />
                     </div>
