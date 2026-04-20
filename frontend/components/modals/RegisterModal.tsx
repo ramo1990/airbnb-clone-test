@@ -12,6 +12,7 @@ import { FaFacebook } from 'react-icons/fa'
 import { RegisterFormValues } from '@/lib/types'
 import Heading from '../Headings'
 import { Button } from '../ui/button'
+import { api } from '@/lib/axios'
 
 
 const RegisterModal = () => {
@@ -27,7 +28,7 @@ const RegisterModal = () => {
         setIsLoading(true);
         console.log(data)
 
-        axios.post('/register/', data)
+        api.post('/register/', data)
         .then(() => {
             registerModal.onClose();
         })

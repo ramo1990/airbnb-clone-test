@@ -7,6 +7,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -30,7 +33,7 @@ SIMPLE_JWT = {
     # Rotation & sécurité
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    # Algorithme
+    # Algorithme de signature
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     # Claims utilisateur
@@ -59,6 +62,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
+
+    'accounts',
 ]
 
 MIDDLEWARE = [
