@@ -6,12 +6,26 @@ import MenuItem from './MenuItem'
 import { MenuIcon } from 'lucide-react'
 import useRegisterModal from '@/lib/useRegisterModal'
 
+import toast from 'react-hot-toast'
+import useLoginModal from '@/lib/useLoginModal'
+import useAuthStore from '@/lib/useAuthStore'
+
 
 const UserMenu = () => {
     const [isOpen, setIsOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement | null>(null)
     const registerModal = useRegisterModal()
-    
+
+    const loginModal = useLoginModal()
+    const { currentUser, logout } = useAuthStore()
+
+    // Fonction logout
+    const handleLogout = () => {
+        logout()
+        toast.success("Déconnecté avec succès")
+        setIsOpen(false)
+    }
+
     // renvoie la valeur opposée de la valeur actuelle; dans ce cas true
     const toggleOpen = useCallback(() => {
         setIsOpen((value) => !value);
@@ -54,14 +68,22 @@ const UserMenu = () => {
             {isOpen && (
                 <div className='absolute rounded-xl shadow-md w-[80vw] sm:w-[60vw] md:w-[40vw] lg:w-[25vw] bg-white overflow-hidden right-0 top-12 text-sm'>
                     <div className='flex flex-col cursor-pointer'>
-                       <MenuItem 
-                            onClick={() => {}}
-                            label= 'Se connecter'
-                        />
-                        <MenuItem 
-                            onClick={registerModal.onOpen}
-                            label= "S'inscrire"
-                        />
+                       {currentUser ? (
+                            <>
+                                <MenuItem onClick={() => {}} label= 'Mes voyages' />
+                                <MenuItem onClick={() => {}} label= 'Mes favoris' />
+                                <MenuItem onClick={() => {}} label= 'Mes réservations' />
+                                <MenuItem onClick={() => {}} label= 'Mes logements' />
+                                <MenuItem onClick={() => {}} label= 'Hôte' />
+                                <hr />
+                                <MenuItem onClick={handleLogout} label= 'Se déconnecter' />
+                            </>
+                        ): (
+                            <>
+                                <MenuItem onClick={loginModal.onOpen} label= 'Se connecter' />
+                                <MenuItem onClick={registerModal.onOpen} label= "S'inscrire" />
+                            </>
+                        )}
                     </div>
                 </div>
             )}
