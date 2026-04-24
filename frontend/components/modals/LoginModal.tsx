@@ -15,6 +15,7 @@ import useLoginModal from '@/lib/useLoginModal'
 import useAuthStore from '@/lib/useAuthStore'
 import { FaFacebook } from 'react-icons/fa'
 import { AxiosError } from 'axios'
+import { signIn } from "next-auth/react"
 
 
 const LoginModal = () => {
@@ -55,6 +56,16 @@ const LoginModal = () => {
         }
     }
 
+    // Fonction réutilisable pour Google & Facebook
+    const handleSocialLogin = async (provider: "google" | "facebook") => {
+        const res = await signIn(provider, { redirect: false })
+
+        if (res?.ok) {
+            await loadUser()
+            window.location.reload()
+        }
+    }
+
     // Contenu du corps
     const bodyContent = (
         <div className='flex flex-col gap-4'>
@@ -75,13 +86,13 @@ const LoginModal = () => {
                 variant="outline" 
                 label='Google' 
                 icon={FcGoogle}
-                onClick={() => {}}
+                onClick={() => handleSocialLogin("google")}
             />
             <Button 
                 variant="outline" 
                 label='Facebook' 
                 icon={FaFacebook}
-                onClick={() => {}}
+                onClick={() => handleSocialLogin("facebook")}
             />
             <div className='text-neutral-500 text-center mt-4 font-light'>
                 <div className='justify-center flex flex-row items-center gap-2'>

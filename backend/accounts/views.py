@@ -3,7 +3,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterSerializer
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
 
+
+User = get_user_model()
 
 class RegisterView(APIView):
     def post(self, request):
@@ -27,3 +31,40 @@ class MeView(APIView):
             "name": user.name,
             "email": user.email,
         })
+    
+
+class GoogleAuthView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        name = request.data.get("name")
+        image = request.data.get("image")
+
+        if not email:
+            return Response({"error": "Email requis"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Créer ou récupérer l'utilisateur
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "name": name or "",
+                "image": image
+            }
+        )
+        if not created and image:
+            user.image = image
+            user.save()
+
+        # Générer les tokens JWT
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        return Response({
+            "access": str(access),
+            "refresh": str(refresh),
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "image": user.image,  # tu peux stocker ça dans un champ profil si besoin
+            }
+        }, status=status.HTTP_200_OK)
