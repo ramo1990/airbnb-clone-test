@@ -26,7 +26,7 @@ const Navbar = () => {
                     <div className="flex-1 md:flex-none flex justify-end">
                         <UserMenu />
                     </div>
-
+                    
                 </div>
             </Container>
         </div>
