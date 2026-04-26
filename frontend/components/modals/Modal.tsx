@@ -64,7 +64,7 @@ const Modal = ({isOpen, onClose, onSubmit, title, body, footer, actionLabel, dis
                     <div className='translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full
                                     bg-white outline-none focus:outline-none'>
                         {/* En tete */}
-                        <div className='flex items-center p-6 rounded-t justify-center relative border-b'>
+                        <div className='flex items-center p-6 rounded-t justify-center relative border-b text-neutral-950'>
                             <button
                                 onClick={handleClose}
                                 className='p-1 border-0 hover:opacity-70 transition absolute left-9' aria-label="Close modal">
