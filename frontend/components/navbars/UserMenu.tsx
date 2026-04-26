@@ -10,12 +10,14 @@ import toast from 'react-hot-toast'
 import useLoginModal from '@/lib/useLoginModal'
 import useAuthStore from '@/lib/useAuthStore'
 import { useSession } from "next-auth/react"
+import useRentModal from '@/lib/useRentModal'
 
 
 const UserMenu = () => {
     const [isOpen, setIsOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement | null>(null)
     const registerModal = useRegisterModal()
+    const rentModal = useRentModal()
 
     const loginModal = useLoginModal()
     const { currentUser, logout } = useAuthStore()
@@ -46,18 +48,23 @@ const UserMenu = () => {
         }
     }, [])
 
+    const onRent = useCallback(() => {
+        if (!currentUser) {
+            return loginModal.onOpen()
+        }
+        rentModal.onOpen()
+    }, [currentUser, loginModal, rentModal])
+
     if (status === "loading" || (status === "authenticated" && !session?.user)) {
         return null
     }
     const user = session?.user || currentUser
 
-    console.log("USER:", user)
-
     return (
         <div className='relative' ref={menuRef}>
             <div className='flex flex-row items-center gap-3'>
                 <div 
-                    onClick={() => {}}
+                    onClick={onRent}
                     className='hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-200 transition cursor-pointer'>
                     Hôte
                 </div>
@@ -83,7 +90,7 @@ const UserMenu = () => {
                                 <MenuItem onClick={() => {}} label= 'Mes favoris' />
                                 <MenuItem onClick={() => {}} label= 'Mes réservations' />
                                 <MenuItem onClick={() => {}} label= 'Mes logements' />
-                                <MenuItem onClick={() => {}} label= 'Hôte' />
+                                <MenuItem onClick={rentModal.onOpen} label= 'Hôte' />
                                 <hr />
                                 <MenuItem onClick={handleLogout} label= 'Se déconnecter' />
                             </>

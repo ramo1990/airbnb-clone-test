@@ -8,7 +8,7 @@ const Heading = ({title, subtitle, center}: HeadingProps) => {
     return (
         <div className={center ? 'text-center' : 'text-start'}>
             
-            <div className='text-2xl font-bold'>
+            <div className='text-2xl font-bold text-neutral-900'>
                 {title}
             </div>
 
