@@ -9,10 +9,10 @@ import { categoryItems } from '../navbars/Category'
 import CategoryInput from '../inputs/CategoryInput'
 import CountrySelect from '../inputs/CountrySelect'
 import dynamic from 'next/dynamic'
-// import CitySelect from '../inputs/CitySelect'
-// import { citiesByCountry } from '@/lib/cities'
-// import { haversineDistance } from '@/lib/distance'
-// import { findCountryFromCoords } from '@/lib/findCountry'
+import CitySelect from '../inputs/CitySelect'
+import { citiesByCountry } from '@/lib/cities'
+import { haversineDistance } from '@/lib/distance'
+import { findCountryFromCoords } from '@/lib/findCountry'
 
 
 
@@ -37,7 +37,7 @@ const RentModal = () => {
         defaultValues: {
             category: '',
             location: null,
-            // city: null,
+            city: null,
             // guestCount: 1,
             // roomCount: 1,
             // bathroomCount: 1,
@@ -52,59 +52,88 @@ const RentModal = () => {
     // eslint-disable-next-line react-hooks/incompatible-library
     const category = watch('category')
     const location = watch('location')
-    // const city = watch('city')
+    const city = watch('city')
 
-    // const countryCode = location?.value
+    const countryCode = location?.value
 
-    // const cities = useMemo(() => {
-    //     return countryCode ? citiesByCountry[countryCode] || [] : []
-    // }, [countryCode])
+    const cities = useMemo(() => {
+        return countryCode ? citiesByCountry[countryCode] || [] : []
+    }, [countryCode])
 
     // trouver la ville la plus proche
-    // const findClosestCity = (coords: number[], list: {name: string; latlng: number[]} []) => {
-    //     if (!list || list.length === 0) return null
+    const findClosestCity = (coords: [number, number], list: {name: string; latlng: [number, number]} []) => {
+        if (!list || list.length === 0) return null
       
-    //     let closest = null
-    //     let minDistance = Infinity
+        let closest = null
+        let minDistance = Infinity
       
-    //     for (const c of list) {
-    //       const dist = haversineDistance(coords, c.latlng)
-    //       if (dist < minDistance) {
-    //         minDistance = dist
-    //         closest = c
-    //       }
-    //     }
+        for (const c of list) {
+          const dist = haversineDistance(coords, c.latlng)
+          if (dist < minDistance) {
+            minDistance = dist
+            closest = c
+          }
+        }
       
-    //     return closest
-    // }
+        return closest
+    }
 
     // handleMapClick est appelée quand l’utilisateur clique sur la carte Leaflet.
-    // const handleMapClick = (coords: [number, number]) => {
-    //     const [lat, lng] = coords // On récupère les coordonnées du clic
-    //     const detectedCountry = findCountryFromCoords(lat, lng) // On essaie de détecter le pays automatiquement
+    const handleMapClick = (coords: [number, number]) => {
+        const [lat, lng] = coords // On récupère les coordonnées du clic
+        const detectedCountry = findCountryFromCoords(lat, lng) // On essaie de détecter le pays automatiquement
     
-    //     if (detectedCountry) {
-    //         setCustomValue("location", detectedCountry) // Si un pays est détecté → on met à jour location
+        if (detectedCountry) {
+            setCustomValue("location", detectedCountry) // Si un pays est détecté → on met à jour location
             
-    //         // const countryCities = citiesByCountry[detectedCountry.value] || [] // On récupère la liste des villes de ce pays
-    //         // const closestCity = findClosestCity(coords, countryCities) // On cherche la ville la plus proche du clic
+            const countryCities = citiesByCountry[detectedCountry.value] || [] // On récupère la liste des villes de ce pays
+            const closestCity = findClosestCity(coords, countryCities) // On cherche la ville la plus proche du clic
             
-    //         // if (closestCity) {
-    //         //     setCustomValue("city", closestCity) // Si une ville est trouvée → on met à jour city
-    //         // }
-    //     } else { // Si aucun pays n’est détecté, On garde l’ancien pays si possible
-    //         setCustomValue("location", location ? { ...location, latlng: coords } : {latlng: coords})
-    //     }
-    // }
+            if (closestCity) {
+                setCustomValue("city", closestCity) // Si une ville est trouvée → on met à jour city
+            }
+        } else { // Si aucun pays n’est détecté, On garde l’ancien pays si possible
+            setCustomValue("location", {
+                ...(location || {}),
+                latlng: coords,
+            })
+        }
+    }
 
+    const center = useMemo(() => {
+        if (!location) return undefined
 
-    const setCustomValue = (id: string, value: unknown) => {
+        const countryCities = citiesByCountry[location.value] || []
+
+        const isCityValid = countryCities.some(c => c.name === city?.name)
+
+        return isCityValid ? city?.latlng : location.latlng
+    }, [location, city])
+
+    const setCustomValue = <T,>(id: string, value: T) => {
         setValue(id, value, {
             shouldValidate: true,
             shouldDirty: true,
             shouldTouch: true
         })
     }
+
+    // 5 villes les plus proches d’une ville
+    const nearbyCities = useMemo(() => {
+        if (!location?.latlng) return []
+
+        const countryCities = citiesByCountry[location.value] || []
+
+        return countryCities
+            .map(city => ({
+                name: city.name,
+                latlng: city.latlng,
+                distance: haversineDistance(location.latlng, city.latlng)
+            }))
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 5) // les 5 plus proches
+    }, [location])
+
 
     const onBack = () => {
         setStep((value) => value > STEPS.CATEGORY ? value - 1 : value)
@@ -128,7 +157,6 @@ const RentModal = () => {
         return 'Retour'
     }, [step])
 
-    // let bodyContent = (
     let bodyContent = (
         <div>
             <Heading title='Lequel décrit le mieux votre logement ?' subtitle='Choississez une categorie' />
@@ -159,13 +187,13 @@ const RentModal = () => {
                     <CountrySelect 
                         value={location}
                         onChange={(value) => {
+                            setCustomValue('city', null) // reset city when country changes
                             setCustomValue('location', value)
-                            // setCustomValue('city', null) // reset city when country changes
                         }}
                     />
                 </div>
 
-                {/* <div className="relative z-20 text-neutral-900">
+                <div className="relative z-20 text-neutral-900">
                     {cities.length > 0 && (
                         <CitySelect 
                             cities={cities}
@@ -173,14 +201,14 @@ const RentModal = () => {
                             onChange={(value) => setCustomValue('city', value)}
                         />
                     )}
-                </div> */}
+                </div>
 
                 {/* Carte */}
                 <div className="relative z-10">
                     <LocationMap 
-                        // center={city?.latlng ?? location?.latlng}
-                        center={location?.latlng}
-                        // onClickMap={handleMapClick}
+                        center={center}
+                        onClickMap={handleMapClick}
+                        nearbyCities={nearbyCities}
                     />
                 </div>
             </div>

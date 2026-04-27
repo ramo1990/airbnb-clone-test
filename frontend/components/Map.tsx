@@ -3,7 +3,7 @@
 import L from 'leaflet'
 import "leaflet/dist/leaflet.css"
 import { useEffect } from 'react'
-import {MapContainer, useMapEvents, TileLayer, Marker, useMap} from 'react-leaflet'
+import {MapContainer, useMapEvents, TileLayer, Marker, useMap, Popup} from 'react-leaflet'
 
 
 delete (L.Icon.Default.prototype as unknown as {_getIconUrl?: unknown})._getIconUrl
@@ -26,7 +26,7 @@ function ClickHandler({onClick}: {onClick: (coords: [number, number]) => void}) 
 interface MapProps {
     center?:[number, number]
     onClickMap?: (coords: [number, number]) => void
-    // nearbyCities?: {name: string; latlng: number[], distance: number} []
+    nearbyCities?: {name: string; latlng: [number, number], distance: number} []
 }
 
 function RecenterMap({center}: {center: [number, number]}) {
@@ -41,9 +41,10 @@ function RecenterMap({center}: {center: [number, number]}) {
     return null
 }
 
-const LocationMap = ({center, onClickMap}: MapProps) => {
+const LocationMap = ({center, onClickMap, nearbyCities}: MapProps) => {
     return (
         <MapContainer
+            key={center ? center.toString() : "default"}
             center={(center ?? [51, -0.09]) as L.LatLngExpression}
             zoom={center ? 6: 2}
             scrollWheelZoom={false}
@@ -55,8 +56,21 @@ const LocationMap = ({center, onClickMap}: MapProps) => {
 
             {center && <RecenterMap center={center}/>}
 
-            {center && (<Marker position={center as L.LatLngExpression} />)}
+            {center && (
+                <Marker 
+                    key={`${center[0]}-${center[1]}`}
+                    position={center as L.LatLngExpression} 
+                />
+            )}
 
+            {/* Affichage des villes proches */}
+            {nearbyCities?.map((city, index) => (
+                <Marker key={index} position={city.latlng as L.LatLngExpression}>
+                <Popup>
+                    {city.name} — {city.distance.toFixed(1)} km
+                </Popup>
+                </Marker>
+            ))}
 
         </MapContainer>
     )

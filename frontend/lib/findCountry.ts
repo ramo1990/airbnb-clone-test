@@ -1,38 +1,39 @@
-// import countries from "world-countries"
-// import { haversineDistance } from "./distance"
+import countries from "world-countries"
+import { haversineDistance } from "./distance"
 
-// interface CountryResult {
-//   value: string
-//   label: string
-//   flag: string
-//   region: string
-//   latlng: number[]
-// }
 
-// export function findCountryFromCoords(lat: number, lng: number): CountryResult | null {
-//   let closest = null
-//   let minDistance = Infinity
+interface CountryResult {
+  value: string
+  label: string
+  flag: string
+  region: string
+  latlng: number[]
+}
 
-//   for (const country of countries) {
-//     if (!country.latlng) continue
+export function findCountryFromCoords(lat: number, lng: number): CountryResult | null {
+  let closest = null
+  let minDistance = Infinity
 
-//     const [clat, clng] = country.latlng
+  for (const country of countries) {
+    if (!country.latlng) continue
 
-//    const dist = haversineDistance([lat, lng], [clat, clng])
+    const [clat, clng] = country.latlng
 
-//     if (dist < minDistance) {
-//       minDistance = dist
-//       closest = country
-//     }
-//   }
+   const dist = haversineDistance([lat, lng], [clat, clng])
 
-//   if (!closest) return null
+    if (dist < minDistance) {
+      minDistance = dist
+      closest = country
+    }
+  }
 
-//   return {
-//     value: closest.cca2,
-//     label: closest.translations?.fra?.common || closest.name.common,
-//     flag: closest.flag,
-//     region: closest.region,
-//     latlng: closest.latlng
-//   }
-// }
+  if (!closest) return null
+
+  return {
+    value: closest.cca2,
+    label: closest.translations?.fra?.common || closest.name.common,
+    flag: closest.flag,
+    region: closest.region,
+    latlng: closest.latlng
+  }
+}
