@@ -13,6 +13,7 @@ import CitySelect from '../inputs/CitySelect'
 import { citiesByCountry } from '@/lib/cities'
 import { haversineDistance } from '@/lib/distance'
 import { findCountryFromCoords } from '@/lib/findCountry'
+import Counter from '../inputs/Counter'
 
 
 
@@ -38,9 +39,9 @@ const RentModal = () => {
             category: '',
             location: null,
             city: null,
-            // guestCount: 1,
-            // roomCount: 1,
-            // bathroomCount: 1,
+            guestCount: 1,
+            roomCount: 1,
+            bathroomCount: 1,
             // images: '', // modele listing de backend
             // price: 1,
             // title: '',
@@ -53,6 +54,10 @@ const RentModal = () => {
     const category = watch('category')
     const location = watch('location')
     const city = watch('city')
+    const guestCount = watch('guestCount')
+    const roomCount = watch('roomCount')
+    const bathroomCount = watch('bathroomCount')
+
 
     const countryCode = location?.value
 
@@ -211,6 +216,33 @@ const RentModal = () => {
                         nearbyCities={nearbyCities}
                     />
                 </div>
+            </div>
+        )
+    }
+
+    // Listing 3: INFO
+    if (step === STEPS.INFO) {        
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Partagez les informations de votre logement" subtitle="Quels équipements proposez-vous ?" />
+                <Counter 
+                    title="Voyageurs"
+                    subtitle="Combien de voyageurs acceptez-vous ?"
+                    value={guestCount}
+                    onChange={(value) => setCustomValue("guestCount", value)}
+                />
+                <Counter 
+                    title="Chambres "
+                    subtitle="Combien de chambres avez-vous ?"
+                    value={roomCount}
+                    onChange={(value) => setCustomValue("roomCount", value)}
+                />
+                <Counter 
+                    title="Salle de bain"
+                    subtitle="Combien de salle de bain avez-vous ?"
+                    value={bathroomCount}
+                    onChange={(value) => setCustomValue("bathroomCount", value)}
+                />
             </div>
         )
     }
