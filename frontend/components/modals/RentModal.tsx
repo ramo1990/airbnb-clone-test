@@ -14,7 +14,7 @@ import { citiesByCountry } from '@/lib/cities'
 import { haversineDistance } from '@/lib/distance'
 import { findCountryFromCoords } from '@/lib/findCountry'
 import Counter from '../inputs/Counter'
-
+import MultiImageUpload from '../inputs/ImageUpload'
 
 
 enum STEPS {
@@ -42,7 +42,7 @@ const RentModal = () => {
             guestCount: 1,
             roomCount: 1,
             bathroomCount: 1,
-            // images: '', // modele listing de backend
+            images: [],
             // price: 1,
             // title: '',
             // description: ''
@@ -57,7 +57,7 @@ const RentModal = () => {
     const guestCount = watch('guestCount')
     const roomCount = watch('roomCount')
     const bathroomCount = watch('bathroomCount')
-
+    const images = watch('images')
 
     const countryCode = location?.value
 
@@ -242,6 +242,19 @@ const RentModal = () => {
                     subtitle="Combien de salle de bain avez-vous ?"
                     value={bathroomCount}
                     onChange={(value) => setCustomValue("bathroomCount", value)}
+                />
+            </div>
+        )
+    }
+
+    // Listing 4: Images
+    if (step === STEPS.IMAGES) {        
+        bodyContent = (
+            <div className='flex flex-col gap-8'>
+                <Heading title='Ajoutez des photos de votre logement' subtitle='Montrez aux voyageurs à quoi ressemble votre logement !'/>
+                <MultiImageUpload 
+                    value={images} 
+                    onChange={(urls) => setCustomValue('images', urls)} 
                 />
             </div>
         )
