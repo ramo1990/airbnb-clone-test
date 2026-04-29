@@ -22,8 +22,8 @@ const nextConfig: NextConfig = {
       // AWS S3 Bucket
       {
         protocol: "https",
-        hostname: "airbnb-clone2.s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
+        hostname: "my-airbnb-clone2.s3.eu-north-1.amazonaws.com", 
+        pathname: "/**"
       },
     ],
     qualities: [75, 95],

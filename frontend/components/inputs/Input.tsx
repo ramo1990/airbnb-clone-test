@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { FieldErrors, UseFormRegister, FieldValues, Path } from 'react-hook-form'
+import { FieldErrors, UseFormRegister, FieldValues, Path, RegisterOptions } from 'react-hook-form'
 import { BiDollar } from 'react-icons/bi';
 
 interface InputProps<T extends FieldValues> {
@@ -11,9 +11,10 @@ interface InputProps<T extends FieldValues> {
     required: boolean;
     register: UseFormRegister<T>;
     errors: FieldErrors<T>;
+    rules?: RegisterOptions<T, Path<T>>
 }
 
-function Input<T extends FieldValues>({id, label, type="text", disabled, formatPrice, required, register, errors}: InputProps<T>) {
+function Input<T extends FieldValues>({id, label, type="text", disabled, formatPrice, required, register, errors, rules}: InputProps<T>) {
     return (
         <div className='w-full relative'>
             {formatPrice && (
@@ -24,7 +25,7 @@ function Input<T extends FieldValues>({id, label, type="text", disabled, formatP
                 id={id}
                 type={type}
                 disabled={disabled}
-                {...register(id, { required })}
+                {...register(id, { required, ...rules })}
                 placeholder=' '
                 className={cn(
                     "peer w-full p-4 pt-6 font-light bg-white border-2 rounded-md outline-none transition disabled:cursor-not-allowed",
