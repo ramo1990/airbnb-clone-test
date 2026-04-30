@@ -168,15 +168,49 @@ const RentModal = () => {
         return 'Retour'
     }, [step])
 
+    const validateCurrentStep = (data: FieldValues, step: STEPS) => {
+        switch (step) {
+          case STEPS.CATEGORY:
+            if (!data.category) {
+              toast.error('Veuillez sélectionner au moins une catégorie')
+              return false
+            }
+            return true
+      
+            case STEPS.LOCATION:
+                if (!data.location) {
+                toast.error('Veuillez sélectionner un pays')
+                return false
+                }
+                return true // city est optionnelle
+      
+            case STEPS.IMAGES:
+                if (!data.images || data.images.length === 0) {
+                toast.error('Veuillez télécharger au moins une image')
+                return false
+                }
+                return true
+      
+            default:
+                return true
+        }
+    }
+
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         if (step !== STEPS.PRICE) {
+            // Validate current step before advancing
+            const isValid = validateCurrentStep(data, step)
+            if (!isValid) {
+                return
+            }
             return onNext()
         }
+
         setIsLoading(true)
 
         console.log("Données envoyées à django:", data)
         
-        api.post('/listing', data)
+        api.post('/listing/', data)
         .then(() => {
             toast.success('Annonce créée')
             router.refresh()
@@ -305,9 +339,11 @@ const RentModal = () => {
                         id="description"
                         {...register("description", {required: true})}
                         disabled={isLoading}
-                        className="w-full p-4 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2
-                            focus:ring-neutral-950 resize-none h-32 text-neutral-950"
-                            placeholder="Decrivez votre logement"
+                        className={`w-full p-4 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2
+                            focus:ring-neutral-950 resize-none h-32 text-neutral-950
+                            ${errors.description ? "border-red-500 focus:ring-red-500" : "border-neutral-300 focus:ring-neutral-950"}
+                            `}
+                        placeholder="Decrivez votre logement"
                     />
                 </div>
             </div>
