@@ -6,6 +6,8 @@ from .serializers import RegisterSerializer
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .serializers import CurrentUserSerializer
+
 
 User = get_user_model()
 
@@ -25,13 +27,9 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-        })
-    
+        serializer = CurrentUserSerializer(request.user)
+        return Response(serializer.data)
+
 
 class GoogleAuthView(APIView):
     def post(self, request):

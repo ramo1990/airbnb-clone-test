@@ -1,10 +1,10 @@
 'use client'
 
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useCallback } from 'react'
 import Image from 'next/image'
-import { ListingType } from '@/lib/types';
-// import HeartButton from '../HeartButton';
+import { CurrentUserType, ListingType } from '@/lib/types';
+import HeartButton from '../HeartButton';
 import { Button } from '../ui/button';
 import { getCountries } from '@/lib/getCountries';
 
@@ -15,10 +15,12 @@ interface ListingCardProps {
     disabled?: boolean;
     actionLabel?: string;
     actionId: string;
+    currentUser: CurrentUserType | null
+    onFavoriteToggle?: (id: string) => void
 }
 
-const ListingCard = ({data, onAction, disabled, actionLabel, actionId}: ListingCardProps) => {
-    // const router = useRouter()
+const ListingCard = ({data, onAction, disabled, actionLabel, actionId, currentUser, onFavoriteToggle}: ListingCardProps) => {
+    const router = useRouter()
     const {getByValue} = getCountries()
 
     const location = getByValue(data.country_code)
@@ -37,7 +39,7 @@ const ListingCard = ({data, onAction, disabled, actionLabel, actionId}: ListingC
 
     return (
         <div 
-            // onClick={() => router.push(`/listing/${data.id}`)} 
+            onClick={() => router.push(`/listing/${data.id}`)} 
             className='col-span-1 cursor-pointer group'
         >
             <div className='flex flex-col gap-2 w-full'>
@@ -54,9 +56,9 @@ const ListingCard = ({data, onAction, disabled, actionLabel, actionId}: ListingC
                             25vw"
                         loading="eager"
                     />
-                    {/* <div className='absolute top-3 right-3'>
-                        <HeartButton listingId={data.id} />
-                    </div> */}
+                    <div className='absolute top-3 right-3'>
+                        <HeartButton listingId={data.id} currentUser={currentUser} onToggle={() => onFavoriteToggle?.(data.id)} />
+                    </div>
                 </div>
 
                 <div className='font-semibold text-lg'>
