@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from .serializers import CreateListingSerializer, ListingSerializer
+from .models import Listing
+
 
 class ListingCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -19,3 +21,12 @@ class ListingCreateView(APIView):
             except Exception as e:
                 return Response({'error': "An error occured while creating the listing"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# Annonce publique
+class ListingListView(APIView):
+    permission_classes = []  # Public
+
+    def get(self, request):
+        listings = Listing.objects.all().order_by("-created_at")
+        serializer = ListingSerializer(listings, many=True)
+        return Response(serializer.data)
