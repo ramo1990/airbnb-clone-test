@@ -210,7 +210,7 @@ const RentModal = () => {
 
         console.log("Données envoyées à django:", data)
         
-        api.post('/listing/', data)
+        api.post('/listing/create/', data)
         .then(() => {
             toast.success('Annonce créée')
             router.refresh()

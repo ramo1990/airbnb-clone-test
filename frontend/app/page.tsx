@@ -1,9 +1,10 @@
-import Categories from "@/components/navbars/Category";
+import HomeClient from "./HomeClient";
+import { getListings } from "@/lib/getListings";
 
-export default function Home() {
+
+export default async function Home() {
+  const listings = await getListings() ?? []
   return (
-    <div className="bg-neutral-100">
-      <Categories />
-    </div>
+    <HomeClient listings={listings} />
   )
 }
