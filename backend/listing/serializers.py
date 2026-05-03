@@ -1,11 +1,24 @@
 from rest_framework import serializers
 from .models import Listing
+from django.contrib.auth import get_user_model 
+
+
+User = get_user_model() 
+
+class UserSerializer(serializers.ModelSerializer): 
+    class Meta: 
+        model = User 
+        fields = ["id", "name", "image"]
+
 
 class ListingSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
+    
     class Meta:
         model = Listing
         fields = "__all__"
         read_only_fields = ["owner", "created_at"]
+
 
 # Serializers personnalisé
 class CreateListingSerializer(serializers.Serializer):
