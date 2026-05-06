@@ -4,9 +4,10 @@ import EmptyState from '@/components/EmptyState';
 import { getCurrentUser } from '@/lib/getCurrentUser';
 import React, { use, useEffect, useState } from 'react'
 import ListingClient from './ListingClient';
-import { CurrentUserType, ListingType } from '@/lib/types';
+import { CurrentUserType, ListingType, ReservationType } from '@/lib/types';
 import { getListingById } from '@/lib/getListingById';
 import Skeleton from '@/components/Skeleton';
+import { getReservationsByListing } from '@/lib/getReservations';
 
 
 interface IParams {
@@ -19,6 +20,8 @@ export default function ListingPage ( {params}: {params: Promise<IParams> }) {
   const [currentUser, setCurrentUser] = useState<CurrentUserType | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [reservations, setReservations] = useState<ReservationType[]>([])
+
 
   useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -27,9 +30,10 @@ export default function ListingPage ( {params}: {params: Promise<IParams> }) {
         Promise.allSettled([
             getListingById(listingId),
             getCurrentUser(),
+            getReservationsByListing(listingId)
         ])
         .then((results) => {
-            const [listingResult, userResult] = results
+            const [listingResult, userResult, reservationsResult] = results
 
             if (listingResult.status === "fulfilled") {
                 setListing(listingResult.value)
@@ -42,6 +46,10 @@ export default function ListingPage ( {params}: {params: Promise<IParams> }) {
 
             if (userResult.status === "fulfilled") {
                 setCurrentUser(userResult.value)
+            }
+
+            if (reservationsResult.status === "fulfilled") {
+                setReservations(reservationsResult.value)
             }
         })
         .finally(() => setIsLoading(false))
@@ -56,7 +64,7 @@ export default function ListingPage ( {params}: {params: Promise<IParams> }) {
 
     return (
         <div>
-            <ListingClient listing={listing} currentUser={currentUser} />
+            <ListingClient listing={listing} currentUser={currentUser} reservations={reservations} />
         </div>
     )
 }

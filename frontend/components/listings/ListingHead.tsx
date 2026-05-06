@@ -40,7 +40,7 @@ const ListingHead = ({title, locationValue, city, images, id, currentUser}: List
                     className='w-full h-[60vh] overflow-hidden rounded-xl relative cursor-pointer'
                 >
                     {/* Image principale */}
-                    <Image src={images[0]} alt='Image principale' fill className='object-cover rounded-xl' />
+                    <Image src={images[0]} alt='Image principale' fill className='object-cover rounded-xl' loading="eager" sizes="100vw" />
 
                     <div className='absolute top-5 right-5'>
                         <HeartButton listingId={id} currentUser={currentUser} />
@@ -55,7 +55,7 @@ const ListingHead = ({title, locationValue, city, images, id, currentUser}: List
                         className='col-span-2 row-span-2 relative cursor-pointer'
                         onClick={() => setIsGalleryOpen(true)}
                     >
-                        <Image src={images[0]} alt='Image principale' fill className='object-cover rounded-xl' />
+                        <Image src={images[0]} alt='Image principale' fill className='object-cover rounded-xl' loading="eager" sizes="(max-width: 768px) 100vw, 50vw"/>
                         <div className='absolute top-5 z-20'>
                             <HeartButton listingId={id} currentUser={currentUser} />
                         </div>
@@ -63,7 +63,7 @@ const ListingHead = ({title, locationValue, city, images, id, currentUser}: List
 
                     {images.slice(1, 5).map((img, index) => (
                         <div key={index} className='relative cursor-pointer' onClick={() => setIsGalleryOpen(true)}>
-                            <Image alt={`Image ${index +2}`} src={img} fill className='object-cover rounded-xl' />
+                            <Image alt={`Image ${index +2}`} src={img} fill className='object-cover rounded-xl' sizes="(max-width: 768px) 50vw, 25vw"/>
                         </div>
                     ))}
                 </div>
