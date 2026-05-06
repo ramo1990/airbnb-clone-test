@@ -1,0 +1,33 @@
+import {ReservationType} from "@/lib/types"
+import { api } from './axios'
+
+
+export async function getReservationsByListing(listingId: string): Promise<ReservationType[]> {
+    try {
+        const response = await api.get(`/reservations/listing/${listingId}/`)
+        return response.data
+    } catch ( error) {
+        console.error("Erreur lors de la recuperation des réservations", error)
+        return []
+    }
+}
+
+// export async function getUserReservations(): Promise<ReservationType[]> {
+//     try {
+//         const response = await api.get(`/reservations/me/`)
+//         return response.data
+//     } catch ( error) {
+//         console.error("Erreur lors de la recuperation des réservations de l'utilisateur", error)
+//         return []
+//     }
+// }
+
+// export async function getHostReservations(): Promise<ReservationType[]> {
+//     try {
+//         const response = await api.get("/reservations/host/")
+//         return response.data
+//     } catch ( error) {
+//         console.error("Erreur lors de la recuperation des réservations de l'hôte", error)
+//         return []
+//     }
+// }
