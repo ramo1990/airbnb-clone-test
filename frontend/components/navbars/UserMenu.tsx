@@ -11,6 +11,7 @@ import useLoginModal from '@/lib/useLoginModal'
 import useAuthStore from '@/lib/useAuthStore'
 import { useSession } from "next-auth/react"
 import useRentModal from '@/lib/useRentModal'
+import { useRouter } from 'next/navigation'
 
 
 const UserMenu = () => {
@@ -18,6 +19,7 @@ const UserMenu = () => {
     const menuRef = useRef<HTMLDivElement | null>(null)
     const registerModal = useRegisterModal()
     const rentModal = useRentModal()
+    const router = useRouter()
 
     const loginModal = useLoginModal()
     const { currentUser, logout } = useAuthStore()
@@ -86,7 +88,7 @@ const UserMenu = () => {
                     <div className='flex flex-col cursor-pointer'>
                        {user ? (
                             <>
-                                <MenuItem onClick={() => {}} label= 'Mes voyages' />
+                                <MenuItem onClick={() => {router.push("/trips"); setIsOpen(false)}} label= 'Mes voyages' />
                                 <MenuItem onClick={() => {}} label= 'Mes favoris' />
                                 <MenuItem onClick={() => {}} label= 'Mes réservations' />
                                 <MenuItem onClick={() => {}} label= 'Mes logements' />
