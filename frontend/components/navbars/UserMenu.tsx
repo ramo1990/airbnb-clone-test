@@ -90,7 +90,7 @@ const UserMenu = () => {
                             <>
                                 <MenuItem onClick={() => {router.push("/trips"); setIsOpen(false)}} label= 'Mes voyages' />
                                 <MenuItem onClick={() => {}} label= 'Mes favoris' />
-                                <MenuItem onClick={() => {}} label= 'Mes réservations' />
+                                <MenuItem onClick={() => {router.push("/reservations"); setIsOpen(false)}} label= 'Mes réservations' />
                                 <MenuItem onClick={() => {}} label= 'Mes logements' />
                                 <MenuItem onClick={rentModal.onOpen} label= 'Hôte' />
                                 <hr />

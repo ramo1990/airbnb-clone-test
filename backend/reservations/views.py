@@ -123,3 +123,13 @@ class CancelReservationView(APIView):
         reservation.delete()
 
         return Response({"message": "Réservation annulée avec succès"}, status=status.HTTP_200_OK)
+
+# Réservation de l'hôte
+class HostReservationsView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        # reservations = Reservation.objects.filter(listing__owner=request.user).exclude(user=request.user).select_related("listing")
+        reservations = Reservation.objects.filter(listing__owner=request.user).select_related("listing")
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data)
