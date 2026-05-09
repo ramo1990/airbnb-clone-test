@@ -18,7 +18,7 @@ interface ListingCardProps {
     onAction?: (id: string) => void;
     disabled?: boolean;
     actionLabel?: string;
-    actionId: string;
+    actionId?: string;
     currentUser: CurrentUserType | null
     onFavoriteToggle?: (id: string) => void
     reservation?: ReservationType
@@ -32,9 +32,10 @@ const ListingCard = ({data, onAction, disabled, actionLabel, actionId, currentUs
 
     const handleCancel = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation()
-        if (disabled) {
+        if (disabled || !actionId) {
             return
         }
+
         onAction?.(actionId)
     }, [onAction, actionId, disabled])
 
