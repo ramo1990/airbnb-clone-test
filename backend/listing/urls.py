@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import FavoriteListView, ListingCreateView, ListingListView, FavoriteToggleView, ListingDetailView
+from .views import FavoriteListView, ListingCreateView, ListingListView, FavoriteToggleView, ListingDetailView, UserListingsView
 
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path("favorites/<uuid:listing_id>/", FavoriteToggleView.as_view(), name="favorite-toggle"),
     path("listing/<uuid:listing_id>/", ListingDetailView.as_view(), name="listing-detail"),
     path("favorites/", FavoriteListView.as_view(), name="favorite-list"),
+    path("listings/me/", UserListingsView.as_view(), name="user-listings"),
 ]
